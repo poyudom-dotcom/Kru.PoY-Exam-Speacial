@@ -72,7 +72,7 @@ def grade_problem(file_name, cases):
         return 0.0, "⚪ ยังไม่ได้เริ่มทำ"
 
     total_score = 0.0
-    max_score = 2.0
+    max_score = 4.0  # ปรับคะแนนเต็มเป็นข้อละ 4.00 คะแนน (5 ข้อ = รวม 20.00 คะแนน)
     score_per_case = max_score / len(cases)
     has_execution_error = False
     passed_cases = 0
@@ -92,30 +92,30 @@ def grade_problem(file_name, cases):
             passed_cases += 1
             total_score += score_per_case
 
-    # 2. ยืดหยุ่นพิเศษ: เพิ่มคะแนนพยายาม (Effort Score)
+    # 2. คะแนนพยายาม (Effort Score) 1.00/4.00 คะแนน
     if total_score == 0.0 and has_student_code(file_name):
-        total_score = 0.50
+        total_score = 1.00
         if has_execution_error:
-            status_msg = "⚠️ โค้ดมีข้อผิดพลาด (Syntax/Runtime Error) - ได้คะแนนพยายาม 0.50/2.00"
+            status_msg = "⚠️ โค้ดมีข้อผิดพลาด (Syntax/Runtime Error) - ได้คะแนนพยายาม 1.00/4.00"
         else:
-            status_msg = "❌ คำตอบยังไม่ถูกต้อง - ได้คะแนนพยายาม 0.50/2.00"
+            status_msg = "❌ คำตอบยังไม่ถูกต้อง - ได้คะแนนพยายาม 1.00/4.00"
     else:
-        status_msg = f"✅ ผ่าน {passed_cases}/{len(cases)} เคส ({total_score:.2f}/2.00)"
+        status_msg = f"✅ ผ่าน {passed_cases}/{len(cases)} เคส ({total_score:.2f}/4.00)"
 
     return round(total_score, 2), status_msg
 
 if __name__ == "__main__":
     print("==========================================")
-    print("   สรุปผลการตรวจคะแนนข้อสอบ (เวอร์ชันยืดหยุ่น)")
+    print("   สรุปผลการตรวจคะแนนข้อสอบ (รวม 20 คะแนน)")
     print("==========================================")
     
     total = 0.0
     for i in range(1, 6):
         file_name = f"Examination_{i}.py"
         score, status = grade_problem(file_name, TEST_CASES[file_name])
-        print(f"ข้อที่ {i} ({file_name}): {score:.2f} / 2.00 คะแนน | {status}")
+        print(f"ข้อที่ {i} ({file_name}): {score:.2f} / 4.00 คะแนน | {status}")
         total += score
         
     print("------------------------------------------")
-    print(f"คะแนนรวมทั้งหมด: {total:.2f} / 10.00 คะแนน")
+    print(f"คะแนนรวมทั้งหมด: {total:.2f} / 20.00 คะแนน")
     print("==========================================")
