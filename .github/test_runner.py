@@ -56,15 +56,13 @@ TEST_CASES = {
         {"input": "70\n", "expected": 250}
     ],
     "Examination_5.py": [
-        {"input": "5\n3\n", "expected": 1},
-        {"input": "-4\n2\n", "expected": 2},
-        {"input": "-3\n-7\n", "expected": 3},
-        {"input": "6\n-1\n", "expected": 4}
+        {"input": "5\n5\n5\n", "expected": "สามเหลี่ยมด้านเท่า"},
+        {"input": "5\n5\n3\n", "expected": "สามเหลี่ยมหน้าจั่ว"},
+        {"input": "3\n4\n5\n", "expected": "สามเหลี่ยมด้านไม่เท่า"}
     ]
 }
 
 def grade_problem(file_name, cases):
-    # 1. ตรวจสอบว่ามีไฟล์และการเขียนโค้ดหรือไม่
     if not os.path.exists(file_name):
         return 0.0, "❌ ไม่พบไฟล์"
     
@@ -72,7 +70,7 @@ def grade_problem(file_name, cases):
         return 0.0, "⚪ ยังไม่ได้เริ่มทำ"
 
     total_score = 0.0
-    max_score = 4.0  # ปรับคะแนนเต็มเป็นข้อละ 4.00 คะแนน (5 ข้อ = รวม 20.00 คะแนน)
+    max_score = 4.0
     score_per_case = max_score / len(cases)
     has_execution_error = False
     passed_cases = 0
@@ -84,15 +82,23 @@ def grade_problem(file_name, cases):
             has_execution_error = True
             continue
 
-        nums = extract_numbers(out)
         expected = case["expected"]
 
-        # ตรวจสอบตัวเลขคำตอบ (เผื่อความคลาดเคลื่อนทศนิยม 0.01)
-        if expected in nums or any(abs(n - expected) < 0.01 for n in nums):
-            passed_cases += 1
-            total_score += score_per_case
+        # 1. ตรวจกรณีผลลัพธ์เป็นข้อความ (String)
+        if isinstance(expected, str):
+            clean_out = re.sub(r'\s+', '', out)
+            clean_expected = re.sub(r'\s+', '', expected)
+            if clean_expected in clean_out:
+                passed_cases += 1
+                total_score += score_per_case
+        # 2. ตรวจกรณีผลลัพธ์เป็นตัวเลข (Number)
+        else:
+            nums = extract_numbers(out)
+            if expected in nums or any(abs(n - expected) < 0.01 for n in nums):
+                passed_cases += 1
+                total_score += score_per_case
 
-    # 2. คะแนนพยายาม (Effort Score) 1.00/4.00 คะแนน
+    # คะแนนพยายาม (Effort Score) 1.00/4.00 คะแนน
     if total_score == 0.0 and has_student_code(file_name):
         total_score = 1.00
         if has_execution_error:
